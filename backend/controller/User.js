@@ -78,18 +78,97 @@ export const login =  async(req, res)=>{
         if(!email || !password){
             return res.status(400).json({
                 success: false,
-                message: "Please enter required field"
+                message: "Please Register"
             })
         }
 
         // check email exist ot not
-        const isEmailExist = User.findOne({email}).select("+password")
-        if(!isEmailExist){
-            return res.status()
+        const user = User.findOne({email}).select("+password")
+        if(!user){
+            return res.status(400).json({
+              success:false,
+              message:"Please register!"
+            })
 
         }
 
+        // compare password 
+        const isMatch = await bcrypt.compare(password, user.password)
+
+        if(!isMatch){
+          return res.status(400).json({
+            success:false,
+            message: "Please enter correct password!"
+          })
+        }
+
+
+         // Generate a JSON Web Token (JWT)
+    // const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ _id: user._id }, "dfdfdsfdsfdsb");
+
+    // Set cookie for token and return success response
+    const options = {
+      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+    };
+
+    res
+      .cookie("token", token, options)
+      .status(200)
+      .json({
+        success: true,
+        token,
+        user,
+        message: `${user.name} welcome back!`,
+      });
+
     } catch (error) {
-        
+        res.status(500).json({
+          success:false,
+          message: error
+        })
     }
 }
+
+
+//handle for get user details
+export const getMyProfile = (req, res) => {
+  console.log("working1")
+  try {
+    res.status(200).json({
+      success: true,
+      message: "details is fetched",
+      user: req.user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+//handle for logout
+export const logout = async (req, res) => {
+  try {
+    res
+      .status(200)
+      .cookie("token", "", {
+        expires: new Date(Date.now()),
+      })
+      .json({
+        success: true,
+        message: "logout successfully!",
+        user: null,
+      });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
