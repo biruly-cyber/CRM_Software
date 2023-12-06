@@ -5,9 +5,10 @@ import jwt from "jsonwebtoken"
 
 // register
 export const registration = async (req, res) => {
+  // console.log(req.body)
   // fetch all data from request body
   const { name, email, password, designation } = req.body;
-
+  
   try {
     // validation
     if (!name || !email || !password || !designation) {
@@ -16,20 +17,20 @@ export const registration = async (req, res) => {
         message: "Please fill all the details",
       });
     }
-
+    
     // check if email is exist
     const isEmailExist = await User.findOne({ email });
-
+    
     if (isEmailExist) {
       return res.status(400).json({
         success: false,
         message: "Email already exist",
       });
     }
-
+    
     //encrypt password
-    const hashPassword = await bcrypt(password, 10);
-
+    const hashPassword = await bcrypt.hash(password, 10);
+    
     // create entry on db
     const user = await User.create({
       name,
@@ -38,10 +39,11 @@ export const registration = async (req, res) => {
       designation,
     });
 
+    
 
     // Generate a JSON Web Token (JWT)
-    // const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    const token = jwt.sign({ _id: user._id }, "dfdfdsfdsfdsb");
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    // const token = jwt.sign({ _id: user._id }, "dfdfdsfdsfdsb");
 
     // Set cookie for token and return success response
     const options = {
@@ -51,7 +53,7 @@ export const registration = async (req, res) => {
 
     res
       .cookie("token", token, options)
-      .status(statusCode)
+      .status(200)
       .json({
         success: true,
         token,
@@ -69,43 +71,44 @@ export const registration = async (req, res) => {
 
 //login
 export const login =  async(req, res)=>{
-
-    // fetch all the data from request body
-    const {email, password} = req.body
-
-    try {
-        // validation 
-        if(!email || !password){
-            return res.status(400).json({
-                success: false,
-                message: "Please Register"
-            })
-        }
-
-        // check email exist ot not
-        const user = User.findOne({email}).select("+password")
-        if(!user){
-            return res.status(400).json({
-              success:false,
-              message:"Please register!"
-            })
-
-        }
-
-        // compare password 
-        const isMatch = await bcrypt.compare(password, user.password)
+  // fetch all the data from request body
+  const {email, password} = req.body
+  
+  try {
+    // validation 
+    if(!email || !password){
+      return res.status(400).json({
+        success: false,
+        message: "Please Register"
+      })
+    }
+    
+    // check email exist ot not
+    const user = await User.findOne({email}).select("+password")
+    if(!user){
+      return res.status(400).json({
+        success:false,
+        message:"Please register!"
+      })
+      
+    }
+    
+    // console.log(user)
+    // compare password 
+    const isMatch = await bcrypt.compare(password, user.password)
+    // console.log("working")
 
         if(!isMatch){
           return res.status(400).json({
-            success:false,
+            success: false,
             message: "Please enter correct password!"
           })
         }
 
 
          // Generate a JSON Web Token (JWT)
-    // const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    const token = jwt.sign({ _id: user._id }, "dfdfdsfdsfdsb");
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    // const token = jwt.sign({ _id: user._id }, "dfdfdsfdsfdsb");
 
     // Set cookie for token and return success response
     const options = {

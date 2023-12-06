@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import { User } from "../model/user.js";
 
 
-export const isAuthenticated = async(req, res)=>{
+export const isAuthenticated = async(req, res, next)=>{
     // extract token from cookie 
     const {token} = req.cookies;
 
@@ -15,7 +15,7 @@ export const isAuthenticated = async(req, res)=>{
     }
 
     //verify token 
-    const decode = jwt.verify(token, "dfdfdsfdsfdsb")
+    const decode = jwt.verify(token, process.env.JWT_SECRET)
 
     // check user exist or not 
     req.user = await User.findById(decode._id)
