@@ -14,17 +14,34 @@ const projectSchema = new mongoose.Schema(
     projectEndDate: {
       type: String,
     },
+    priority:{
+      type: String,
+      required: true
+    },
     description: {
       type: String,
       required: true,
     },
-    managerName: {
-      type: String,
-      required: true,
+    managerId: {
+      type:mongoose.Schema.Types.ObjectId,
+        ref:"employee_details",
+        required:true
     },
     websiteUrl: {
       type: String,
     },
+    isCompleted:{
+      type:Boolean,
+      default: false
+    },
+    isScrap:{
+      type:Boolean,
+      default: false 
+    },
+    completedPercent:{
+      type:Number,
+      default: 0
+    }
   },
   {
     timestamps: true,

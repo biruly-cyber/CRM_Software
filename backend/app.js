@@ -3,7 +3,11 @@ import dotenv from "dotenv"
 import cookieParser from "cookie-parser";
 import cors from "cors"
 
+
+//all routes
 import userRoutes  from "./routes/UserRoutes.js"
+import employeeRoutes  from "./routes/EmployeeRoutes.js"
+import projectRoutes from "./routes/ProjectRoutes.js"
 
 export const app = express()
 
@@ -23,6 +27,14 @@ app.use(cookieParser())
 
 // // Routes for user
 app.use('/api/v1/users', userRoutes);
+
+//routes for employee
+app.use('/api/v1/employee', employeeRoutes)
+
+// route for project 
+app.use("/api/v1/project", projectRoutes)
+
+
 
 
 
