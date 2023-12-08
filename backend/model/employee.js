@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const employeeSchema  = new mongoose.Schema({
+    employeeId:{
+        type:String, 
+        required:true
+    },
     employeeName:{
         type:String,
         required:true 
@@ -12,8 +16,13 @@ const employeeSchema  = new mongoose.Schema({
         type:String,
         required:true
     },
+    password:{
+        type:String,
+        required:true 
+    },
     employeePhoneNumber:{
-        type:String
+        type:String,
+        required:true
     },
     dateOfBirth:{
         type:String 
@@ -37,7 +46,12 @@ const employeeSchema  = new mongoose.Schema({
         type:String 
     },
     designation:{
-        type:String
+        type:String,
+        required: true
+    },
+    designationType:{
+        type:String,
+        required: true 
     },
     department:{ 
         type:String
@@ -46,3 +60,5 @@ const employeeSchema  = new mongoose.Schema({
     timestamps: true
 }
 )
+
+export  const  Employee = mongoose.model("employee_details", employeeSchema)
