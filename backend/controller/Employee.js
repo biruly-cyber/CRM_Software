@@ -43,7 +43,15 @@ export const newEmployee = async (req, res) => {
 
     // Check if the user is an HR
     const userDesignationType = req.user.designationType;
-    console.log(userDesignationType);
+
+
+    if(userDesignationType != "Human Resources"){
+      return res.status(400).json({
+        success:false,
+        message: "Only HR can add the employee Details"
+      })
+    }
+
 
     // Encrypt password
     const hashPassword = await bcrypt.hash(password, 10);
@@ -57,7 +65,7 @@ export const newEmployee = async (req, res) => {
       });
     }
 
-    if (userDesignationType === "Human Resources") {
+    
       // Create a user entry for authentication
       const user = await User.create({
         name: employeeName,
@@ -93,12 +101,8 @@ export const newEmployee = async (req, res) => {
         employee,
         message: "Account created successfully!",
       });
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: "You cannot add employee details",
-      });
-    }
+    
+    
   } catch (error) {
     console.error(error);
     return res.status(500).json({

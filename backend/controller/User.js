@@ -74,6 +74,7 @@ export const login =  async(req, res)=>{
   // fetch all the data from request body
   const {email, password} = req.body
   
+  
   try {
     // validation 
     if(!email || !password){
@@ -84,6 +85,7 @@ export const login =  async(req, res)=>{
     }
     
     // check email exist ot not
+    
     const user = await User.findOne({email}).select("+password")
     if(!user){
       return res.status(400).json({
@@ -114,9 +116,11 @@ export const login =  async(req, res)=>{
     const options = {
       expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       httpOnly: true,
+      secure:true,
+      sameSite: "None"
     };
 
-    res
+    return res
       .cookie("token", token, options)
       .status(200)
       .json({
@@ -133,6 +137,7 @@ export const login =  async(req, res)=>{
         })
     }
 }
+
 
 
 //handle for get user details
